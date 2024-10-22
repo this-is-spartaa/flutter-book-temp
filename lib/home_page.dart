@@ -13,6 +13,36 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<NaverBookItem>? items;
+  TextEditingController textEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  void onSubmitted(String value) async {
+    print('onSubmitted called : $value');
+    final client = Client();
+    final result = await client.get(
+        Uri.parse('https://openapi.naver.com/v1/search/book.json?query=$value'),
+        headers: {
+          'X-Naver-Client-Id': 'Fr8WRdHW93iHVIUdQ_Ph',
+          'X-Naver-Client-Secret': '9B_N4Opr9x',
+        });
+
+    if (result.statusCode == 200) {
+      final res = NaverBookResponse.fromJson(jsonDecode(result.body));
+
+      setState(() {
+        items = res.items;
+      });
+    }
+  }
+
+  void onSearch() {
+    onSubmitted(textEditingController.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +58,8 @@ class _HomePageState extends State<HomePage> {
             height: 50,
             child: TextField(
               maxLines: 1,
-              onSubmitted: (value) async {
-                print('onSubmitted called : $value');
-                final client = Client();
-                final result = await client.get(
-                    Uri.parse(
-                        'https://openapi.naver.com/v1/search/book.json?query=$value'),
-                    headers: {
-                      'X-Naver-Client-Id': 'Fr8WRdHW93iHVIUdQ_Ph',
-                      'X-Naver-Client-Secret': '9B_N4Opr9x',
-                    });
-
-                if (result.statusCode == 200) {
-                  final res =
-                      NaverBookResponse.fromJson(jsonDecode(result.body));
-
-                  setState(() {
-                    items = res.items;
-                  });
-                }
-              },
+              controller: textEditingController,
+              onSubmitted: onSubmitted,
               decoration: InputDecoration(
                 border: MaterialStateOutlineInputBorder.resolveWith(
                   (states) {
@@ -76,9 +88,7 @@ class _HomePageState extends State<HomePage> {
           centerTitle: false, // for title spacing
           actions: [
             GestureDetector(
-              onTap: () {
-                print("test");
-              },
+              onTap: onSearch,
               child: Container(
                 color: Colors.transparent,
                 width: 50,
