@@ -1,7 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_book_app/book_bottom_sheet.dart';
+import 'package:flutter_book_app/model/naver_book_item.dart';
+import 'package:flutter_book_app/model/naver_book_response.dart';
+import 'package:http/http.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<NaverBookItem>? items;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -16,8 +28,25 @@ class HomePage extends StatelessWidget {
             height: 50,
             child: TextField(
               maxLines: 1,
-              onSubmitted: (value) {
+              onSubmitted: (value) async {
                 print('onSubmitted called : $value');
+                final client = Client();
+                final result = await client.get(
+                    Uri.parse(
+                        'https://openapi.naver.com/v1/search/book.json?query=$value'),
+                    headers: {
+                      'X-Naver-Client-Id': 'Fr8WRdHW93iHVIUdQ_Ph',
+                      'X-Naver-Client-Secret': '9B_N4Opr9x',
+                    });
+
+                if (result.statusCode == 200) {
+                  final res =
+                      NaverBookResponse.fromJson(jsonDecode(result.body));
+
+                  setState(() {
+                    items = res.items;
+                  });
+                }
               },
               decoration: InputDecoration(
                 border: MaterialStateOutlineInputBorder.resolveWith(
@@ -66,7 +95,7 @@ class HomePage extends StatelessWidget {
         body: Padding(
           padding: EdgeInsets.all(20),
           child: GridView.builder(
-            itemCount: 10,
+            itemCount: items?.length ?? 0,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 3 / 4,
@@ -74,6 +103,7 @@ class HomePage extends StatelessWidget {
               mainAxisSpacing: 10,
             ),
             itemBuilder: (context, index) {
+              final item = items![index];
               return GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
@@ -81,16 +111,16 @@ class HomePage extends StatelessWidget {
                     isDismissible: true,
                     builder: (context) {
                       return BookBottomSheet(
-                        imgUrl: 'https://image.yes24.com/goods/82935976/XL',
-                        title: '해리포터',
-                        author: 'J. K. 롤링',
-                        content: '마법사의 돌을 찾아서',
+                        imgUrl: item.image,
+                        title: item.title,
+                        author: item.author,
+                        content: item.description,
                       );
                     },
                   );
                 },
                 child: Image.network(
-                  'https://image.yes24.com/goods/82935976/XL',
+                  item.image,
                   fit: BoxFit.cover,
                 ),
               );

@@ -28,7 +28,7 @@ class BookBottomSheet extends StatelessWidget {
       child: Row(
         children: [
           Image.network(
-            'https://image.yes24.com/goods/82935976/XL',
+            imgUrl,
             fit: BoxFit.fitHeight,
           ),
           SizedBox(width: 8),
