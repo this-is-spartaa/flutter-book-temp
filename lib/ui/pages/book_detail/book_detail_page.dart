@@ -20,7 +20,9 @@ class BookDetailPage extends StatelessWidget {
       ),
       body: InAppWebView(
         initialSettings: InAppWebViewSettings(
-          useHybridComposition: true,
+          // 이건 숙제. 안드로이드에서 실행 해보고 userAgent가 뭔지, userAgent 어떻게 해야하는지?
+          userAgent:
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
         ),
         onConsoleMessage: (controller, consoleMessage) {
           print(consoleMessage);
