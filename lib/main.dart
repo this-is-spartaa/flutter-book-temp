@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_book_app/home_page.dart';
+import 'package:flutter_book_app/ui/pages/book_search/book_search_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

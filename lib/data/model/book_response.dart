@@ -1,7 +1,7 @@
-import 'package:flutter_book_app/model/naver_book_item.dart';
+import 'package:flutter_book_app/data/model/book.dart';
 
-class NaverBookResponse {
-  NaverBookResponse({
+class BookResponse {
+  BookResponse({
     required this.lastBuildDate,
     required this.total,
     required this.start,
@@ -12,16 +12,16 @@ class NaverBookResponse {
   int total;
   int start;
   int display;
-  List<NaverBookItem> items;
+  List<Book> items;
 
-  factory NaverBookResponse.fromJson(Map<String, dynamic> json) {
-    return NaverBookResponse(
+  factory BookResponse.fromJson(Map<String, dynamic> json) {
+    return BookResponse(
       lastBuildDate: json['lastBuildDate'],
       total: json['total'],
       start: json['start'],
       display: json['display'],
       items: List.of(json['items']).map((e) {
-        return NaverBookItem.fromJson(e);
+        return Book.fromJson(e);
       }).toList(),
     );
   }

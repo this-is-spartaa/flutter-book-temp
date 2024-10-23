@@ -1,51 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_book_app/book_bottom_sheet.dart';
-import 'package:flutter_book_app/model/naver_book_item.dart';
-import 'package:flutter_book_app/model/naver_book_response.dart';
-import 'package:http/http.dart';
+import 'package:flutter_book_app/ui/pages/book_search/book_search_view_model.dart';
+import 'package:flutter_book_app/ui/widgets/book_bottom_sheet.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List<NaverBookItem>? items;
+class HomePage extends ConsumerWidget {
   TextEditingController textEditingController = TextEditingController();
 
   @override
-  void dispose() {
-    textEditingController.dispose();
-    super.dispose();
-  }
-
-  void onSubmitted(String value) async {
-    print('onSubmitted called : $value');
-    final client = Client();
-    final result = await client.get(
-        Uri.parse('https://openapi.naver.com/v1/search/book.json?query=$value'),
-        headers: {
-          'X-Naver-Client-Id': 'Fr8WRdHW93iHVIUdQ_Ph',
-          'X-Naver-Client-Secret': '9B_N4Opr9x',
-        });
-
-    if (result.statusCode == 200) {
-      final res = NaverBookResponse.fromJson(jsonDecode(result.body));
-
-      setState(() {
-        items = res.items;
-      });
-    }
-  }
-
-  void onSearch() {
-    onSubmitted(textEditingController.text);
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(bookSearchVM);
+    final vm = ref.read(bookSearchVM.notifier);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -59,7 +23,7 @@ class _HomePageState extends State<HomePage> {
             child: TextField(
               maxLines: 1,
               controller: textEditingController,
-              onSubmitted: onSubmitted,
+              onSubmitted: vm.search,
               decoration: InputDecoration(
                 border: MaterialStateOutlineInputBorder.resolveWith(
                   (states) {
@@ -88,7 +52,9 @@ class _HomePageState extends State<HomePage> {
           centerTitle: false, // for title spacing
           actions: [
             GestureDetector(
-              onTap: onSearch,
+              onTap: () {
+                vm.search(textEditingController.text);
+              },
               child: Container(
                 color: Colors.transparent,
                 width: 50,
@@ -105,7 +71,7 @@ class _HomePageState extends State<HomePage> {
         body: Padding(
           padding: EdgeInsets.all(20),
           child: GridView.builder(
-            itemCount: items?.length ?? 0,
+            itemCount: state?.length ?? 0,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               childAspectRatio: 3 / 4,
@@ -113,7 +79,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisSpacing: 10,
             ),
             itemBuilder: (context, index) {
-              final item = items![index];
+              final item = state![index];
               return GestureDetector(
                 onTap: () {
                   showModalBottomSheet(

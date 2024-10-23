@@ -1,5 +1,5 @@
-class NaverBookItem {
-  NaverBookItem({
+class Book {
+  Book({
     required this.title,
     required this.link,
     required this.image,
@@ -20,8 +20,8 @@ class NaverBookItem {
   String isbn;
   String description;
 
-  factory NaverBookItem.fromJson(Map<String, dynamic> map) {
-    return NaverBookItem(
+  factory Book.fromJson(Map<String, dynamic> map) {
+    return Book(
       title: map['title'],
       link: map['link'],
       image: map['image'],
