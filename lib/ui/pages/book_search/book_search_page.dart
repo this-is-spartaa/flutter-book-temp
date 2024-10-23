@@ -102,6 +102,7 @@ class HomePageState extends ConsumerState<HomePage> {
                         title: item.title,
                         author: item.author,
                         content: item.description,
+                        link: item.link,
                       );
                     },
                   );

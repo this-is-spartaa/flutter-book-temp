@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_book_app/ui/pages/book_detail/book_detail_page.dart';
 
 class BookBottomSheet extends StatelessWidget {
   String imgUrl;
   String title;
   String author;
   String content;
+  String link;
 
   BookBottomSheet({
     super.key,
@@ -12,6 +14,7 @@ class BookBottomSheet extends StatelessWidget {
     required this.title,
     required this.author,
     required this.content,
+    required this.link,
   });
 
   @override
@@ -31,7 +34,7 @@ class BookBottomSheet extends StatelessWidget {
             imgUrl,
             fit: BoxFit.fitHeight,
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,6 +62,28 @@ class BookBottomSheet extends StatelessWidget {
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return BookDetailPage(title: title, link: link);
+                      },
+                    ));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '자세히 보기',
+                      style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
