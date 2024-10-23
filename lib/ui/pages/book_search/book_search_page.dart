@@ -3,11 +3,22 @@ import 'package:flutter_book_app/ui/pages/book_search/book_search_view_model.dar
 import 'package:flutter_book_app/ui/widgets/book_bottom_sheet.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => HomePageState();
+}
+
+class HomePageState extends ConsumerState<HomePage> {
   TextEditingController textEditingController = TextEditingController();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(bookSearchVM);
     final vm = ref.read(bookSearchVM.notifier);
     return GestureDetector(
