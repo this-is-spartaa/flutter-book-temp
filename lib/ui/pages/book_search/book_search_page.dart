@@ -19,8 +19,8 @@ class HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(bookSearchVM);
-    final vm = ref.read(bookSearchVM.notifier);
+    final state = ref.watch(bookSearchViewModel);
+    final vm = ref.read(bookSearchViewModel.notifier);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
